@@ -16,3 +16,20 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+class Chat(models.Model):
+    ts = models.DateTimeField(auto_now=True)
+    ts_created = models.DateTimeField(auto_now_add=True)
+
+    user1 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user1')
+
+    
+    user2 = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='user2')
+
+class ChatMessage(models.Model):
+    ts = models.DateTimeField(auto_now=True)
+    ts_created = models.DateTimeField(auto_now_add=True)
+    mittente = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    chat = models.ForeignKey(Chat, on_delete=models.CASCADE)
+    message = models.TextField()
+    

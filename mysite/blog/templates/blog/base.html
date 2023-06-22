@@ -1,25 +1,112 @@
-{%load static%}
+{% load static %}
+<!DOCTYPE html>
 <html>
-    <head>
-    <title>Django Girls blog</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <link href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Il Chat</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBqar">
     <link rel="stylesheet" href="{% static 'css/blog.css' %}">
-</head>
-
-<body>
-    <header class="page-header">
-      <div class="container">
-          <h1><a href="/">Django BOYZ Blog</a></h1>
-      </div>
-    </header>
-    <main class="container">
-        <div class="row">
-            <div class="col">
-            {% block content %}
-            {% endblock %}
+    <link rel="stylesheet" href="https://fontawesome.webstorage-4sigma.it/fontawesome-pro-6.2.1-web/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fontawesome.webstorage-4sigma.it/fontawesome-pro-6.2.1-web/css/all.min.css"></noscript>
+    <body>
+        <div class="container">
+          <div class="contacts">
+            <h2>contatti</h2>
+            <div class="search-bar">
+              <input type="text" id="search-input" placeholder="Cerca contatti..." oninput="filterContacts()">
             </div>
-        </div>
-    </main>
-</body>
+            <ul id="userList"></ul>
+          </div>
+          <div class="chat">
+              {% block content %}
+              {% endblock %}
+              </div>
+          </div>
+  </body>
+  <script>
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('search-input').focus();
+    });
+    
+    function filterContacts() {
+      var input = document.getElementById('search-input').value.toLowerCase();
+      var contactList = document.getElementById('userList');
+      var contacts = contactList.getElementsByTagName('li');
+      for (var i = 0; i < contacts.length; i++) {
+        var name = contacts[i].innerText.toLowerCase();
+        if (name.includes(input)) {
+          contacts[i].style.display = 'flex';
+        } else {
+          contacts[i].style.display = 'none';
+        }
+      }
+    }
+    
+    function cambia_contatto(nome) {
+      window.location.pathname = '/chat/' + nome + '/';
+      const listItem = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = "javascript:cambia_contatto('" + user.first_name + "')";
+        link.textContent = user.first_name;
+        listItem.appendChild(link);
+        userList.appendChild(listItem);
+    }
+    
+    fetch("{% url 'blog:api get users' %}", {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRFToken': "{{ csrf_token }}",
+      },
+      body: JSON.stringify({        
+      })
+    })
+    .then(resp => resp.json())
+    .then(responseData => {
+      const userList = document.getElementById('userList');
+      responseData.users.forEach(user => {
+        const listItem = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = "javascript:cambia_contatto('" + user.first_name + "')";
+        link.textContent = user.first_name;
+        listItem.appendChild(link);
+        userList.appendChild(listItem);
+
+      });
+    });  
+    function sendMessage() {
+      var messageInput = document.getElementById('message-input');
+      var message = messageInput.value.trim();
+      console.log(message);
+      var chatContainer = document.getElementById('chat-container');
+      var messageElement = document.createElement('div');
+      messageElement.classList.add('message', 'sent');
+      messageElement.innerHTML = '<p>' + message + '</p><div class="timestamp">' + getCurrentTime() + '</div>';
+      chatContainer.appendChild(messageElement);
+   
+      if (message.toLowerCase().includes('maiale2')) {
+        var replyElement = document.createElement('div');
+        replyElement.classList.add('message', 'received', 'maiale');
+        replyElement.innerHTML = '<p>maiale2</p><div class="timestamp">' + getCurrentTime() + '</div>';
+        chatContainer.appendChild(replyElement);
+      }
+    
+      messageInput.value = '';
+    
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+    function getCurrentTime() {
+      var now = new Date();
+      var hours = now.getHours();
+      var minutes = now.getMinutes();
+      var ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      var currentTime = hours + ':' + minutes + ' ' + ampm;
+      return currentTime;
+    }
+  </script>   
 </html>

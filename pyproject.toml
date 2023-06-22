@@ -6,7 +6,7 @@ authors = ["antani"]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-Django = "3.2.10"
+Django = "4.0.0"
 
 [tool.poetry.dev-dependencies]
 
