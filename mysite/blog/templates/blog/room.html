@@ -33,9 +33,10 @@
       <div class="circle-container">
         <div class="circle-text"><i class="fa-regular fa-face-smile fa-spin-pulse" style="color: #ffffff;"></i></div>
       </div>
-      <input type="text" id="message-input" class="input-field" placeholder="Scrivi un messaggio...">
-      <button class="send-button" onclick="sendMessage()"><i class="fa-light fa-paper-plane-top fa-spin-pulse" style="color: #ffffff;"></i>
-      </button>
+    <div id="messageBox" cols="100" rows="20"></div><br>
+    <input id="chat-message-input" type="text" size="30"><br>
+    <input id="chat-message-submit" type="button" value="Send">
+    {{ room_name|json_script:"room-name" }}
     </div>
   </div>
   </div>
